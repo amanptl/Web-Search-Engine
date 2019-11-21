@@ -4,5 +4,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="DataStructures"/>
 	<classpathentry kind="src" path="Resources"/>
+	<classpathentry kind="lib" path="C:/Users/Aman/Downloads/jsoup-1.12.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

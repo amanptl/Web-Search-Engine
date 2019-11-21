@@ -1,54 +1,45 @@
 package engine;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
+import indexing.InvertedIndexing;
+
 public class SearchEngine {
-	private static Indexing index;
+	private static InvertedIndexing index;
+	public static Crawler crawler;
 	private static List<String> query = new ArrayList<String>();
 	private static long sTime;
 	private static long eTime;
-	private static Dictionary dictionary;
 	private static Suggestions suggestions;
 
 	private static void startIndexing() throws IOException {
+		print("Indexing started...");
 		sTime = System.currentTimeMillis();
-		index = new Indexing();
+		index = new InvertedIndexing();
 		eTime = System.currentTimeMillis();
-		print("Indexing Time: " + calculateCPUTime(sTime, eTime) + "ms.");
+		print("Indexing complete.");
+//		print("Indexing Time: " + calculateCPUTime(sTime, eTime) + "ms.");
 
-	}
-
-	private static void initializeDictionary() throws IOException {
-		dictionary = new Dictionary();
 	}
 
 	private static void initializeSuggestions() {
 		suggestions = new Suggestions();
 	}
 
-	private static void getQuery() {
-		String choice;
-		System.out.print("Search: ");
-		Scanner input = new Scanner(System.in);
-		queryTokenizer(input.nextLine());
+	private static void getQuery(String rootUrl, String query) throws IOException {
+		System.out.println("Searching "+query+" in "+rootUrl);
+		crawler = new Crawler(rootUrl);
+		startIndexing();
+		initializeSuggestions();
+		queryTokenizer(query);
+		
 		searchQuery();
-		System.out.print("Want to continue search (Y/N)? ");
-		choice = input.nextLine();
-		switch (choice) {
-		case "Y":
-		case "y":
-			query.clear();
-			getQuery();
-		case "N":
-		case "n":
-			input.close();
-		default:
-			input.close();
-		}
+
 	}
 
 	private static void searchQuery() {
@@ -63,34 +54,36 @@ public class SearchEngine {
 		sTime = System.currentTimeMillis();
 		List<String> suggestions = Suggestions.getSuggestion(words);
 		eTime = System.currentTimeMillis();
-		print("Did you mean: ");
-		for (String word : suggestions) {
-			System.out.print(word + "  ");
+		if (words.size() != 0) {
+			print("Did you mean: ");
+			for (String word : suggestions) {
+				query.add(word);
+				System.out.print(word + "  ");
+			}
+			print("");
 		}
-		print("");
-		print("Suggestion Time: " + calculateCPUTime(sTime, eTime) + "ms.");
 	}
 
 	public static void main(String[] args) throws IOException {
-		startIndexing();
-		initializeDictionary();
-		initializeSuggestions();
-		getQuery();
-
+		getQuery("https://www.charusat.ac.in/", "studen life");
+		
+		
 	}
 
 	private static void queryTokenizer(String queryString) {
 		StringTokenizer stringTokenizer = new StringTokenizer(queryString);
 		List<String> checkWords = new ArrayList<String>();
 		String word;
+		List<String> corrected = new ArrayList<String>();
 		while (stringTokenizer.hasMoreTokens()) {
 			word = stringTokenizer.nextToken();
-			if(!dictionary.searchWord(word))
+			if (!index.dictionary.searchWord(word))
 				checkWords.add(word);
-			query.add(word);
 		}
-		suggestWords(checkWords);
-
+		if(checkWords.size()!=0)
+			suggestWords(checkWords);
+		
+		
 	}
 
 	private static void print(Object object) {

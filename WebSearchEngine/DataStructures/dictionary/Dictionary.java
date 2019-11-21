@@ -1,4 +1,4 @@
-package engine;
+package dictionary;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,19 +13,18 @@ import textProcessing.TST;
 import editDistance.Sequences;
 
 public class Dictionary {
-	private static TST<Integer> tst = new TST<Integer>();
+	private static TST<Integer> tst;
+	private static int i = 0;
 	
-	public Dictionary() throws IOException {
-		File file = new File("Resources/words.txt");
-		BufferedReader br = new BufferedReader(new FileReader(file));
-		String st;
-		int i = 0;
-		System.out.println("Adding words to dictionary");
-		while ((st = br.readLine()) != null) {
-			tst.put(st, i);
+	public Dictionary() {
+		tst = new TST<Integer>();
+	}
+	
+	public static void putWord(String word) {
+		if(word.length() >= 1) {
+			tst.put(word, i);
 			i++;
 		}
-		System.out.println(i+" words added.");
 	}
 	
 	public static TST<Integer> getTST() {
@@ -41,8 +40,6 @@ public class Dictionary {
 		}
 	}
 	
-	
-
 	public static void main(String[] args) {
 
 	}

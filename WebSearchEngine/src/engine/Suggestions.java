@@ -8,14 +8,15 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
 
+import dictionary.Dictionary;
 import editDistance.Sequences;
 import textProcessing.TST;
-import engine.Dictionary;
+import indexing.InvertedIndexing;
 
 public class Suggestions {
 	private static TST<?> tst;
 	public Suggestions() {
-		tst = Dictionary.getTST();
+		tst = InvertedIndexing.dictionary.getTST();
 	}
 	
 	public static List<String> getSuggestion(List<String> userWords) {
