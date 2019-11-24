@@ -11,12 +11,12 @@ import java.util.Set;
 import dictionary.Dictionary;
 import editDistance.Sequences;
 import textProcessing.TST;
-import indexing.InvertedIndexing;
+import indexing.testIndexing;
 
 public class Suggestions {
 	private static TST<?> tst;
 	public Suggestions() {
-		tst = InvertedIndexing.dictionary.getTST();
+		tst = testIndexing.dictionary.getTST();
 	}
 	
 	public static List<String> getSuggestion(List<String> userWords) {

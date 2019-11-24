@@ -60,7 +60,6 @@ public class Crawler {
             
             while(matcher.find()){
                 String w = matcher.group(); 
-                
                 if(!marked.contains(w)){
                     marked.add(w);
                     queue.add(w);
@@ -68,6 +67,7 @@ public class Crawler {
             } 
             
         }
+        System.out.println(marked.size());
         System.out.println("Crawling complete.");
     }
     
@@ -77,7 +77,7 @@ public class Crawler {
     
    
     
-    public static void main(String[] args){
-
+    public static void main(String[] args) throws IOException{
+    	Crawler c = new Crawler("http://www.uwindsor.ca/");
     }
 }

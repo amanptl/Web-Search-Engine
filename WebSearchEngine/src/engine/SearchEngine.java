@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.StringTokenizer;
 
-import indexing.InvertedIndexing;
+import indexing.testIndexing;
 
 public class SearchEngine {
-	private static InvertedIndexing index;
-	public static Crawler crawler;
+	private static testIndexing index;
+	public static WCrawler crawler;
+	private static String rootUrl;
 	private static List<String> query = new ArrayList<String>();
 	private static long sTime;
 	private static long eTime;
@@ -20,7 +21,7 @@ public class SearchEngine {
 	private static void startIndexing() throws IOException {
 		print("Indexing started...");
 		sTime = System.currentTimeMillis();
-		index = new InvertedIndexing();
+		index = new testIndexing();
 		eTime = System.currentTimeMillis();
 		print("Indexing complete.");
 //		print("Indexing Time: " + calculateCPUTime(sTime, eTime) + "ms.");
@@ -31,15 +32,29 @@ public class SearchEngine {
 		suggestions = new Suggestions();
 	}
 
-	private static void getQuery(String rootUrl, String query) throws IOException {
-		System.out.println("Searching "+query+" in "+rootUrl);
-		crawler = new Crawler(rootUrl);
+	private static void startCrawl() throws Exception {
+		crawler = new WCrawler(rootUrl);
+	}
+
+	private static void preProcess() throws Exception {
+		startCrawl();
 		startIndexing();
 		initializeSuggestions();
-		queryTokenizer(query);
-		
-		searchQuery();
+	}
 
+	private static void getQuery() throws IOException {
+		String choice = "y";
+		Scanner in = new Scanner(System.in);
+		while (true) {
+			System.out.println("Search: ");
+			String q = in.nextLine();
+			queryTokenizer(q);
+			searchQuery();
+		}
+//		in.close();
+		
+//		queryTokenizer("student");
+//		searchQuery();
 	}
 
 	private static void searchQuery() {
@@ -57,17 +72,17 @@ public class SearchEngine {
 		if (words.size() != 0) {
 			print("Did you mean: ");
 			for (String word : suggestions) {
-				query.add(word);
 				System.out.print(word + "  ");
 			}
 			print("");
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		getQuery("https://www.charusat.ac.in/", "studen life");
-		
-		
+	public static void main(String[] args) throws Exception {
+		rootUrl = "http://www.uwindsor.ca/";
+		preProcess();
+		getQuery();
+
 	}
 
 	private static void queryTokenizer(String queryString) {
@@ -77,13 +92,14 @@ public class SearchEngine {
 		List<String> corrected = new ArrayList<String>();
 		while (stringTokenizer.hasMoreTokens()) {
 			word = stringTokenizer.nextToken();
+			query.add(word);
 			if (!index.dictionary.searchWord(word))
 				checkWords.add(word);
 		}
-		if(checkWords.size()!=0)
-			suggestWords(checkWords);
-		
-		
+//		if (checkWords.size() != 0)
+//			suggestWords(checkWords);
+//			
+
 	}
 
 	private static void print(Object object) {
